@@ -7,6 +7,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <head>
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="_csrf" th:content="${_csrf.token}"/>
+<meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+
 <title>Style</title>
 <!-- Tell the browser to be responsive to screen width -->
 <meta
@@ -25,6 +28,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <!-- DataTables -->
 <link rel="stylesheet"
 	th:href="@{/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css}">
+  <link rel="stylesheet" th:href="@{/bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css}">
 <!-- AdminLTE Skins. We have chosen the skin-blue for this starter
         page. However, you can choose any other skin. Make sure you
         apply the skin class to the body tag so the changes take effect. -->
@@ -103,13 +107,18 @@ desired effect
 											<div class="col-sm-3"></div>
 
 											<div class="col-sm-6">
-												<label for="fecha" class="col-sm-2 col-form-label">Fecha</label>
-												<input type="text" th:field="*{fecha}" 
-													class="form-control"
-													th:errorclass="'form-control alert-danger'" /> <small
-													class="form-text text-danger"
-													th:if="${#fields.hasErrors('fecha')}"
-													th:errors="*{fecha}"></small>
+												
+
+												<div class="input-group date">
+													<label for="fecha" class="col-sm-2 col-form-label">Fecha</label>
+													<div class="input-group-addon">
+														<i class="fa fa-calendar"></i>
+													</div>
+													<input type="text" id="datepicker" th:field="*{fecha}" class="form-control"
+														th:errorclass="'form-control alert-danger'" />
+												</div>
+												<small class="form-text text-danger"
+													th:if="${#fields.hasErrors('fecha')}" th:errors="*{fecha}"></small>
 											</div>
 											<div class="col-sm-3"></div>
 
@@ -119,12 +128,15 @@ desired effect
 
 											<div class="col-sm-6">
 												<label for="bloque" class="col-sm-2 col-form-label">Bloque</label>
-												<input type="text" th:field="*{bloque}"
-													class="form-control"
-													th:errorclass="'form-control alert-danger'" /> <small
-													class="form-text text-danger"
-													th:if="${#fields.hasErrors('bloque')}"
-													th:errors="*{bloque}"></small>
+												    <select class="form-control select2" style="width: 100%"
+                                                            name="bloque"
+                                                            id="bloque">
+                                                        <option value="">Seleccione el bloque</option>
+                                                        <option th:if="${not bloques.isEmpty()}"
+                                                                th:value="${bl.idBloque}"
+                                                                th:text="${bl.horaInicio}+' '+${bl.horaFin}"
+                                                                th:each="bl : ${bloques}"></option>
+                                                    </select>
 											</div>
 											<div class="col-sm-3"></div>
 
@@ -134,10 +146,15 @@ desired effect
 
 											<div class="col-sm-6">
 												<label for="cliente" class="col-sm-2 col-form-label">Cliente</label>
-												<input type="text" th:field="*{cliente}" class="form-control"
-													th:errorclass="'form-control alert-danger'" /> <small
-													class="form-text text-danger"
-													th:if="${#fields.hasErrors('cliente')}" th:errors="*{cliente}"></small>
+												<select class="form-control select2" style="width: 100%"
+                                                            name="cliente"
+                                                            id="cliente">
+                                                        <option value="">Seleccione un cliente</option>
+                                                        <option th:if="${not clientes.isEmpty()}"
+                                                                th:value="${cl.id}"
+                                                                th:text="${cl.nombre}+' '+${cl.apellido}"
+                                                                th:each="cl : ${clientes}"></option>
+                                                    </select>
 											</div>
 											<div class="col-sm-3"></div>
 
@@ -148,12 +165,16 @@ desired effect
 											<div class="col-sm-6">
 												<label for="servicio" class="col-sm-2 col-form-label">Servicio</label>
 
-												<input type="text" th:field="*{servicio}"
-													class="form-control"
-													th:errorclass="'form-control alert-danger'" /> <small
-													class="form-text text-danger"
-													th:if="${#fields.hasErrors('servicio')}"
-													th:errors="*{servicio}"></small>
+												<select class="form-control select2" style="width: 100%"
+												        onchange="cargarBarberos(this.value)"
+                                                            name="servicio"
+                                                            id="servicio">
+                                                        <option value="">Seleccione un servicio</option>
+                                                        <option th:if="${not servicios.isEmpty()}"
+                                                                th:value="${sv.id}"
+                                                                th:text="${sv.nombre}+': '+${sv.precio}"
+                                                                th:each="sv : ${servicios}"></option>
+                                                    </select>
 											</div>
 											<div class="col-sm-3"></div>
 
@@ -162,14 +183,13 @@ desired effect
 										<div class="form-group row">
 											<div class="col-sm-3"></div>
 											<div class="col-sm-6">
-												<label for="barbero" class="col-sm-2 col-form-label">Barbero</label>
+												<label for="barberos" class="col-sm-2 col-form-label">Barbero</label>
 
-												<input type="text" th:field="*{barbero}"
-													class="form-control"
-													th:errorclass="'form-control alert-danger'" /> <small
-													class="form-text text-danger"
-													th:if="${#fields.hasErrors('barbero')}"
-													th:errors="*{barbero}"></small>
+												<select class="form-control select2" style="width: 100%"
+                                                            name="barberos"
+                                                            th:field="*{barbero}"
+                                                            id="barberos">
+                                                    </select>
 											</div>
 											<div class="col-sm-3"></div>
 
@@ -217,6 +237,9 @@ desired effect
 		th:src="@{/bower_components/datatables.net/js/jquery.dataTables.min.js}"></script>
 	<script
 		th:src="@{/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js}"></script>
+		
+	<!-- bootstrap datepicker -->
+<script th:src="@{/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js}"></script>	
 	<script src="/toastr.min.js"></script>
 	<script>
 		$(function() {
@@ -249,6 +272,48 @@ desired effect
 				"sSortDescending" : ": Activar para ordenar la columna de manera descendente"
 			}
 		}
+		
+		
+		//Date picker
+	    $('#datepicker').datepicker({
+	      autoclose: true
+	    })
+	     var token = $("meta[name='_csrf']").attr("content");
+         var header = $("meta[name='_csrf_header']").attr("content");
+         console.log(token);
+         console.log(header);
+         
+	    function cargarBarberos(s) {
+        var dropdown = $('#barberos');
+        dropdown.empty();
+        var json = {"id": s};
+        console.log(json);
+        $.ajax({
+            type: "POST",
+            contentType: "application/json",
+            url: "/barbero/listarbarberosservicios",
+            dataType: "json",
+            data: JSON.stringify(json),
+            cache: false,
+            beforeSend: function (e) {
+                e.setRequestHeader(header, token)
+            },
+            timeout: 600000,
+            success: function (data) {
+            	console.log(data);
+                if (data.length > 0) {
+                    $.each(data, function (index, value) {
+                        dropdown.append($('<option/>', {
+                            value: value.id,
+                            text: value.nombre
+                        }));
+                    });
+                }
+            }
+        });
+      }
+	
+	    
 	</script>
 
 	<script th:inline="javascript">

@@ -22,7 +22,7 @@ import com.barberia.springboot.app.models.service.IReservaService;
 import com.barberia.springboot.app.models.service.IServicioService;
 
 
-@Secured("ROLE_USER")
+
 @Controller
 @RequestMapping("/reserva")
 @SessionAttributes("reserva")
@@ -43,27 +43,50 @@ public class ReservaController {
 	@Autowired
 	private IServicioService ss ;
 	
+	@Secured("ROLE_USER")
 	@GetMapping(value = "/form")
 	public String crear(Map <String,Object> model) {
 		Reserva reserva = new Reserva();
 		model.put("reserva",reserva);
 		model.put("titulo", "Crear Reserva");
+		model.put("bloques",sbh.findAll());
+		model.put("clientes",scliente.findAll());
+		model.put("servicios",ss.findAll());
 		return "reserva/form";
 	}
 	
+	@Secured("ROLE_USER")
 	@RequestMapping(value = "/form", method = RequestMethod.POST)
-	public String guardar(@Valid Reserva reserva, BindingResult result, Model model, RedirectAttributes flash, SessionStatus status) {
+	public String guardar(@Valid ValidReserva reserva, BindingResult result, Model model, RedirectAttributes flash, SessionStatus status) {
 		if(result.hasErrors()) {
 			model.addAttribute("titulo","Crear Reserva");
 			return "redirect:/reserva/form";
 		}
-		// Mensaje flash ni idea
-		String mensajeFlash = "Reserva creado con Exito";
 		
+		// Mensaje flash ni idea
+		//String mensajeFlash = "Reserva creado con Exito";
+		Reserva resrva = new Reserva();
+		String mensajeFlash = (resrva.getId() != null)? "Cliente editado con éxito!" : "Cliente creado con éxito!";
+		resrva.setBarbero(sbarbero.findOne(reserva.getBarbero()));
+		resrva.setBloque(sbh.findOne(reserva.getBloque()));
+		resrva.setCliente(scliente.findOne(reserva.getCliente()));
+		resrva.setEstado(0);
+		resrva.setFecha(reserva.getFecha());
+		resrva.setPrecio(5000);
+		resrva.setServicio(ss.findOne(reserva.getServicio()));
 		//reserva.setFecha(vreserva.getFecha());
-		sreserva.save(reserva);
+		sreserva.save(resrva);
 		status.setComplete();
 		flash.addFlashAttribute("sucess",mensajeFlash);
 		return "redirect:/cliente/listar";
 	}
+	
+	@Secured("ROLE_ADMIN")
+	@GetMapping(value = "/reportes")
+	public String reporte(Map <String,Object> model) {
+		Reserva reserva = new Reserva();
+		model.put("titulo", "Reportes de la Barberia Style");
+		return "reserva/reportes";
+	}
+	
 }

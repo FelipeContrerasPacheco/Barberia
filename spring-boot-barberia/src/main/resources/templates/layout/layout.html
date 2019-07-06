@@ -3,6 +3,9 @@
 	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
 <meta charset="UTF-8">
+
+<meta name="_csrf" th:content="${_csrf.token}"/>
+<meta name="_csrf_header" th:content="${_csrf.headerName}"/>
 </head>
 <body>
 	<header class="main-header" th:fragment="header">
@@ -86,6 +89,14 @@
 
 			<!-- Sidebar Menu -->
 			<ul class="sidebar-menu" data-widget="tree">
+				
+				<li sec:authorize="hasRole('ROLE_USER')"
+					th:classappend="${#httpServletRequest.getRequestURI() == '/reserva/form' ? 'active':''}"><a
+					th:href="@{/reserva/form}"><i class="fa fa-cut"></i> <span>Agendar Reserva</span></a></li>
+				
+				<li sec:authorize="hasRole('ROLE_ADMIN')"
+					th:classappend="${#httpServletRequest.getRequestURI() == '/reserva/reportes' ? 'active':''}"><a
+					th:href="@{/reserva/reportes}"><i class="fa fa-cut"></i> <span>Reportes</span></a></li>
 
 				<li sec:authorize="hasRole('ROLE_ADMIN')"
 					th:classappend="${#httpServletRequest.getRequestURI() == '/barbero/listar' ? 'active':''}"><a

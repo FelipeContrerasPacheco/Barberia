@@ -2,6 +2,8 @@ package com.barberia.springboot.app.controllers;
 
 import org.springframework.stereotype.Controller;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -27,6 +30,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.barberia.springboot.app.models.entity.Barbero;
 import com.barberia.springboot.app.models.service.IBarberoService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 //@Secured("ROLE_ADMIN")
 @Controller
@@ -111,4 +115,19 @@ public class barberoController {
 	public List<Barbero> listarBarberoCtm(){
 		return barberoService.findAll() ;
 	}
+	
+	//@RequestMapping(path = "/listarbarberosservicios", produces="application/json")
+	//@ResponseBody
+	//public List<Barbero> listarBarberoyServicios(){
+	//	return barberoService.buscarporServicio(2L) ;
+	//}
+	
+    @PostMapping(value = "/listarbarberosservicios", produces = {"application/json"})
+    public @ResponseBody
+    List<Barbero> cargarBarberos(@RequestBody String json) throws Exception {
+    	HashMap result = new ObjectMapper().readValue(json, HashMap.class);
+        return  barberoService.buscarporServicio(Long.parseLong((String) result.get("id")));
+    }
+
+	
 }

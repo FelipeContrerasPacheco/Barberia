@@ -35,6 +35,19 @@ INSERT INTO servicio (duracion,nombre,precio) VALUES (30,"Degradado + Barba",800
 INSERT INTO servicio (duracion,nombre,precio) VALUES (0,"Gift Card",0);
 
 
+INSERT INTO barbero_servicio (barbero_id,servicio_id) VALUES (1,1);
+INSERT INTO barbero_servicio (barbero_id,servicio_id) VALUES (2,3);
+INSERT INTO barbero_servicio (barbero_id,servicio_id) VALUES (2,2);
+INSERT INTO barbero_servicio (barbero_id,servicio_id) VALUES (3,2);
+INSERT INTO barbero_servicio (barbero_id,servicio_id) VALUES (5,2);
+INSERT INTO barbero_servicio (barbero_id,servicio_id) VALUES (8,2);
+
+INSERT INTO bloque_horario (id_bloque,hora_fin,hora_inicio) VALUES(1,"09:00","09:30");
+INSERT INTO bloque_horario (id_bloque,hora_fin,hora_inicio) VALUES(2,"09:30","10:00");
+INSERT INTO bloque_horario (id_bloque,hora_fin,hora_inicio) VALUES(3,"10:00","10:30");
+INSERT INTO bloque_horario (id_bloque,hora_fin,hora_inicio) VALUES(4,"10:30","11:00");
+
+
 /*Creamos usuarios y sus roles*/
 INSERT INTO users (username, password, enabled) VALUES('secretaria', '$2a$10$HUuNeObsc5iqan95ZfmPjOB8nO51Q4TErr6o7ALlr9FbwFWY6LBpO', 1);
 INSERT INTO users (username, password, enabled) VALUES('admin','$2a$10$VCpIQGDiFwthrX2HQAC.E.5Jete/BSMkNOywJFx5sbO2XvxoJ7Pdq', 1);

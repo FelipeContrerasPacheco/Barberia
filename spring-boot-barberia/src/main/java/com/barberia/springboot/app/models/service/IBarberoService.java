@@ -14,5 +14,6 @@ public interface IBarberoService {
 
 	void delete(Long id);
 	
+	List<Barbero> buscarporServicio(Long idServicio);
 
 }
