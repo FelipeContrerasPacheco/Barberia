@@ -1,10 +1,12 @@
 package com.barberia.springboot.app.controllers;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -16,6 +18,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
@@ -88,4 +92,19 @@ public class BloqueHorarioController {
 		model.addAttribute("bloques",servicio.findAll());
 		return "bloquehorario/listar" ;
 	}
+	
+	@PreAuthorize("isAnonymous() or isFullyAuthenticated()")
+	@RequestMapping(path = "/listarhorasfb", produces="application/json")
+	@ResponseBody
+	public List<BloqueHorario>buscarPorFechaYBarbero(@RequestParam String fecha,@RequestParam Long id){
+		return servicio.buscarPorFechaYBarbero(fecha, id);
+	}
+	
+	@PreAuthorize("isAnonymous() or isFullyAuthenticated()")
+	@RequestMapping(path = "/listarhorasfs", produces="application/json")
+	@ResponseBody
+	public List<BloqueHorario>buscarPorFechaYServicio(@RequestParam String fecha,@RequestParam Long id){
+		return servicio.buscarPorFechaYServicio(fecha, id);
+	}
+	
 }

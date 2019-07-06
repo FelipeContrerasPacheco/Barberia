@@ -1,5 +1,6 @@
 package com.barberia.springboot.app.models.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,10 +8,17 @@ import org.springframework.stereotype.Service;
 
 import com.barberia.springboot.app.models.dao.IBarberoDao;
 import com.barberia.springboot.app.models.entity.Barbero;
+import com.barberia.springboot.app.models.entity.BarberoServicio;
 @Service
 public class BarberoServiceImpl implements IBarberoService{
 	@Autowired
 	private IBarberoDao barberoDao;
+	
+	@Autowired
+	private BarberoServicioServiceImp bss ;
+	
+	@Autowired
+	private ServicioServiceImpl ss ;
 
 	@Override
 	public List<Barbero> findAll() {
@@ -30,5 +38,13 @@ public class BarberoServiceImpl implements IBarberoService{
 	@Override
 	public void delete(Long id) {
 		barberoDao.deleteById(id);
+	}
+	
+	public List<Barbero> buscarporServicio(Long idServicio){
+		List<Barbero> aux = new ArrayList<Barbero>();
+		for(BarberoServicio bar : bss.buscarPorServicio(ss.findOne(idServicio))) {
+			aux.add(bar.getBarbero());
+		}
+		return aux ;
 	}
 }

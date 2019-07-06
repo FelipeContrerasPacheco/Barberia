@@ -1,0 +1,36 @@
+<html>
+
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+</head>
+
+<input type="button" value="wea" id="wea">
+
+<select id="cbarberos">
+
+
+</select>
+
+<script>
+	$("#wea").click(function(){
+	$('cbarberos').empty;
+	$.ajax({
+		url: 'http://localhost:8080/barberosrc/listar',
+		dataType: 'json',
+		eror: function(){
+		alert("Error en la wea");
+		}
+	}).done(function(barbero) {
+		$.each(barberos,function(i,item){
+			$('cbarberos')
+			.append($('<option>',{
+			value: item.id ,
+			text: item.nombre
+			}));
+		});
+	});
+
+	});
+</script>
+
+</html>

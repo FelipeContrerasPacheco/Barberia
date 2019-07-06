@@ -13,5 +13,9 @@ public interface IBloqueHorarioService {
 	BloqueHorario findOne(Long id);
 	
 	void delete(Long id);
+
+	List<BloqueHorario> buscarPorFechaYBarbero(String fecha, Long id);
+
+	List<BloqueHorario> buscarPorFechaYServicio(String fecha, Long id);
 	
 }

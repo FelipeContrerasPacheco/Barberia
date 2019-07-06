@@ -7,5 +7,6 @@ import com.barberia.springboot.app.models.entity.BloqueHorario;
 
 @Repository("repositoriobloquehorario")
 public interface BloqueHorarioDao extends JpaRepository<BloqueHorario,Long> {
-	public abstract BloqueHorario findByIdBloque(long id) ;
+	public BloqueHorario findByIdBloque(long id) ;
+	
 }
