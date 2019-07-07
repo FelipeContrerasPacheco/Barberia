@@ -13,4 +13,8 @@ public interface IReservaService {
 	public Reserva findOne(Long id);
 	
 	public void delete(Long id);
+	
+	public List<Object> findTopBarbero();
+	
+	public List<Object> findTopServicios();
 }

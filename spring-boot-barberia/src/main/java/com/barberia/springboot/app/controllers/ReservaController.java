@@ -66,7 +66,7 @@ public class ReservaController {
 		// Mensaje flash ni idea
 		//String mensajeFlash = "Reserva creado con Exito";
 		Reserva resrva = new Reserva();
-		String mensajeFlash = (resrva.getId() != null)? "Cliente editado con éxito!" : "Cliente creado con éxito!";
+		String mensajeFlash = (resrva.getId() != null)? "Cliente editado con éxito!" : "Reserva ingresada creado con éxito!";
 		resrva.setBarbero(sbarbero.findOne(reserva.getBarbero()));
 		resrva.setBloque(sbh.findOne(reserva.getBloque()));
 		resrva.setCliente(scliente.findOne(reserva.getCliente()));
@@ -77,8 +77,8 @@ public class ReservaController {
 		//reserva.setFecha(vreserva.getFecha());
 		sreserva.save(resrva);
 		status.setComplete();
-		flash.addFlashAttribute("sucess",mensajeFlash);
-		return "redirect:/cliente/listar";
+		flash.addFlashAttribute("success",mensajeFlash);
+		return "redirect:/reserva/form";
 	}
 	
 	@Secured("ROLE_ADMIN")

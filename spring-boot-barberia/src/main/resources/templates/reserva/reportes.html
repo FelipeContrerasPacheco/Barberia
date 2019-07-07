@@ -83,57 +83,54 @@ desired effect
 
 				<section class="content">
 					<div class="row">
-						<div class="col-xs-12">
+						<div class="col-12">
 							<div class="box box-info">
-								<div class="box-header">
-									<h3 class="box-title"></h3>
-									<a th:href="@{/reserva/form}"
-										class="btn btn-success btn-flat margin btn-xl pull-right"
-										th:text="'Crear cliente'"></a>
-								</div>
+								<div class="box-header"></div>
 								<!-- /.box-header -->
 								<div class="box-body">
-									<div class="table-responsive">
-										<table id="example1"
-											class="table table-bordered table-striped">
-											<thead>
-												<tr>
-													<th>Id</th>
-													<th>Nombre</th>
-													<th>Apellido</th>
-													<th>Email</th>
-													<th>Teléfono</th>
-													<th>Acciones</th>
-												</tr>
-											</thead>
-											<tbody>
-												<tr th:each="cliente: ${clientes}">
-													<td th:text="${cliente.id}"></td>
-													<td th:text="${cliente.nombre}"></td>
-													<td th:text="${cliente.apellido}"></td>
-													<td th:text="${cliente.email}"></td>
-													<td th:text="${cliente.telefono}"></td>
-													<td><a class="btn btn-info btn-flat margin"
-														th:href="@{/cliente/form/} + ${cliente.id}"
-														th:text="#{text.barbero.editar}"></a> <a
-														class="btn btn-danger btn-flat margin"
-														th:href="@{/cliente/eliminar/} + ${cliente.id}"
-														th:text="#{text.barbero.eliminar}"
-														onclick="return confirm('¿Estás seguro que quieres eliminar el cliente?');"></a>
-													</td>
-												</tr>
-											</tbody>
-											<tfoot>
-												<tr>
-													<th>Id</th>
-													<th>Nombre</th>
-													<th>Apellido</th>
-													<th>Email</th>
-													<th>Teléfono</th>
-													<th>Acciones</th>
-												</tr>
-											</tfoot>
-										</table>
+
+
+									<div class="col-xs-3"></div>
+									<div class="col-xs-6" id="reportPage">
+										<h3 class="box-title" align="center">Top Barberos</h3>
+										<canvas id="myChart"></canvas>
+
+										<button id="xls" class='gen_btn btn btn-success'>Generar
+											csv</button>
+										<button id="pdf" class='gen_btn btn btn-primary'>Generar
+											pdf</button>
+									</div>
+									<div class="col-xs-3"></div>
+								</div>
+								<!-- /.box-body -->
+							</div>
+							<!-- /.box -->
+						</div>
+						<!-- /.col -->
+					</div>
+
+					<div class="row">
+						<div class="col-12">
+							<div class="box box-info">
+								<div class="box-header"></div>
+								<!-- /.box-header -->
+								<div class="box-body">
+									<div id="reportPage">
+
+										<div class="col-md-3"></div>
+										<div class="col-md-6" id="reportPage2">
+											<h3 class="box-title" align="center">Top Servicios más
+												solicitados</h3>
+											<canvas id="myChart2"></canvas>
+
+											<button id="xls2" class='gen_btn btn btn-success'>Generar
+												csv</button>
+											<button id="pdf2" class='gen_btn btn btn-primary'>Generar
+												pdf</button>
+
+										</div>
+										<div class="col-md-3"></div>
+
 									</div>
 								</div>
 								<!-- /.box-body -->
@@ -169,6 +166,11 @@ desired effect
 	<script
 		th:src="@{/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js}"></script>
 	<script src="/toastr.min.js"></script>
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+
+	<script src="https://unpkg.com/jspdf@latest/dist/jspdf.min.js"></script>
+
 	<script>
 		$(function() {
 			$('#example1').DataTable({
@@ -223,5 +225,366 @@ desired effect
 	<!-- Optionally, you can add Slimscroll and FastClick plugins.
      Both of these plugins are recommended to enhance the
      user experience. -->
+
+	<script>
+
+		$(document).ready(function(){
+		
+			$.ajax({
+			url:"http://localhost:8080/api/topBarberos",
+			method:"GET",
+			success: function(data){
+				console.log(data[0][2]);
+				var barberos=[];
+				var cantidad=[];
+				
+				for(var i in data){
+					barberos.push(data[i][0]+''+data[i][1]);
+					cantidad.push(data[i][2]);
+				}
+				
+				var ctx = document.getElementById('myChart');
+				var myChart = new Chart(ctx, {
+				    type: 'bar',
+				    data: {
+				        labels: barberos,
+				        datasets: [{
+				            label: '# reservas por barbero',
+				            data: cantidad,
+				            backgroundColor: [
+				                'rgba(252, 99, 132, 0.2)',
+				                'rgba(54, 162, 235, 0.2)',
+				                'rgba(255, 206, 86, 0.2)',
+				                'rgba(75, 192, 192, 0.2)',
+				                'rgba(153, 102, 255, 0.2)',
+				                'rgba(255, 159, 64, 0.2)',
+				                'rgba(79, 192, 192, 0.2)',
+				                'rgba(188, 102, 255, 0.2)',
+				                'rgba(254, 159, 64, 0.2)',
+				                
+				                
+				            ],
+				            borderColor: [
+				                'rgba(255, 99, 132, 1)',
+				                'rgba(54, 162, 235, 1)',
+				                'rgba(255, 206, 86, 1)',
+				                'rgba(75, 192, 192, 1)',
+				                'rgba(153, 102, 255, 1)',
+				                'rgba(255, 159, 64, 1)'
+				            ],
+				            borderWidth: 1
+				        }]
+				    },
+				    options: {
+				        scales: {
+				            yAxes: [{
+				                ticks: {
+				                    beginAtZero: true
+				                }
+				            }]
+				        },
+				        plugins: {
+				            datasource: {
+				                url: 'mydata.xlsx'
+				       }
+				    }}
+				});
+				
+
+				
+			},
+			error: function(data){
+				console.log(data);
+			}
+		});
+			
+			
+			$.ajax({
+				url:"http://localhost:8080/api/topServicios",
+				method:"GET",
+				success: function(data){
+					
+					var servicios=[];
+					var cantidad=[];
+					
+					for(var i in data){
+						servicios.push(data[i][0]);
+						cantidad.push(data[i][1]);
+					}
+					
+					var ctx = document.getElementById('myChart2');
+					var myChart = new Chart(ctx, {
+					    type: 'bar',
+					    data: {
+					        labels: servicios,
+					        datasets: [{
+					            label: '# de Servicios',
+					            data: cantidad,
+					            backgroundColor: [
+					                'rgba(252, 99, 132, 0.2)',
+					                'rgba(54, 162, 235, 0.2)',
+					                'rgba(255, 206, 86, 0.2)',
+					                'rgba(75, 192, 192, 0.2)',
+					                'rgba(153, 102, 255, 0.2)',
+					                'rgba(255, 159, 64, 0.2)',
+					                'rgba(79, 192, 192, 0.2)',
+					                'rgba(188, 102, 255, 0.2)',
+					                'rgba(254, 159, 64, 0.2)',
+					                
+					                
+					            ],
+					            borderColor: [
+					                'rgba(255, 99, 132, 1)',
+					                'rgba(54, 162, 235, 1)',
+					                'rgba(255, 206, 86, 1)',
+					                'rgba(75, 192, 192, 1)',
+					                'rgba(153, 102, 255, 1)',
+					                'rgba(255, 159, 64, 1)'
+					            ],
+					            borderWidth: 1
+					        }]
+					    },
+					    options: {
+					        scales: {
+					            yAxes: [{
+					                ticks: {
+					                    beginAtZero: true
+					                }
+					            }]
+					        },
+					        plugins: {
+					            datasource: {
+					                url: 'mydata.xlsx'
+					       }
+					    }}
+					});
+					
+
+					
+				},
+				error: function(data){
+					console.log(data);
+				}
+			});
+			
+			
+			
+			
+		$("#xls").click(function(){
+		    
+			$.ajax({
+				url:"http://localhost:8080/api/topBarberos",
+				method:"GET",
+				success: function(data){
+					console.log(data);
+					
+					var data = data;
+			        console.log(data);
+			        if(data == '')
+			            return;
+			        
+			        JSONToCSVConvertor(data, "Reporte_TopBarberos", true);
+				},
+				error: function(data){
+					console.log(data);
+				}
+
+			});
+
+	     });
+		
+	    $("#xls2").click(function(){
+		    
+			$.ajax({
+				url:"http://localhost:8080/api/topServicios",
+				method:"GET",
+				success: function(data){
+					console.log(data);
+					
+					var data = data;
+			        console.log(data);
+			        if(data == '')
+			            return;
+			        
+			        JSONToCSVConvertor(data, "Reporte_TopServicios", true);
+				},
+				error: function(data){
+					console.log(data);
+				}
+
+			});
+
+	     });
+		
+		
+		$('#pdf').click(function(event) {
+			  // get size of report page
+			  var reportPageHeight = $('#reportPage').innerHeight();
+			  var reportPageWidth = $('#reportPage').innerWidth();
+
+			  // create a new canvas object that we will populate with all other canvas objects
+			  var pdfCanvas = $('<canvas />').attr({
+			    id: "canvaspdf",
+			    width: reportPageWidth,
+			    height: reportPageHeight
+			  });
+
+			  // keep track canvas position
+			  var pdfctx = $(pdfCanvas)[0].getContext('2d');
+			  var pdfctxX = 0;
+			  var pdfctxY = 0;
+			  var buffer = 100;
+
+			  // for each chart.js chart
+			  $("canvas").each(function(index) {
+			    // get the chart height/width
+			    var canvasHeight = $(this).innerHeight();
+			    var canvasWidth = $(this).innerWidth();
+
+			    // draw the chart into the new canvas
+			    pdfctx.drawImage($(this)[0], pdfctxX, pdfctxY, canvasWidth, canvasHeight);
+			    pdfctxX += canvasWidth + buffer;
+
+			    // our report page is in a grid pattern so replicate that in the new canvas
+			    if (index % 2 === 1) {
+			      pdfctxX = 0;
+			      pdfctxY += canvasHeight + buffer;
+			    }
+			  });
+
+			  // create new pdf and add our new canvas as an image
+			  var pdf = new jsPDF('l', 'pt', [reportPageWidth, reportPageHeight]);
+			  pdf.addImage($(pdfCanvas)[0], 'PNG', 0, 0);
+
+			  // download the pdf
+			  pdf.save('reporte en pdf.pdf');
+			});
+		
+		$('#pdf2').click(function(event) {
+			  // get size of report page
+			  var reportPageHeight = $('#reportPage2').innerHeight();
+			  var reportPageWidth = $('#reportPage2').innerWidth();
+
+			  // create a new canvas object that we will populate with all other canvas objects
+			  var pdfCanvas = $('<canvas />').attr({
+			    id: "canvaspdf",
+			    width: reportPageWidth,
+			    height: reportPageHeight
+			  });
+
+			  // keep track canvas position
+			  var pdfctx = $(pdfCanvas)[0].getContext('2d');
+			  var pdfctxX = 0;
+			  var pdfctxY = 0;
+			  var buffer = 100;
+
+			  // for each chart.js chart
+			  $("canvas").each(function(index) {
+			    // get the chart height/width
+			    var canvasHeight = $(this).innerHeight();
+			    var canvasWidth = $(this).innerWidth();
+
+			    // draw the chart into the new canvas
+			    pdfctx.drawImage($(this)[0], pdfctxX, pdfctxY, canvasWidth, canvasHeight);
+			    pdfctxX += canvasWidth + buffer;
+
+			    // our report page is in a grid pattern so replicate that in the new canvas
+			    if (index % 2 === 1) {
+			      pdfctxX = 0;
+			      pdfctxY += canvasHeight + buffer;
+			    }
+			  });
+
+			  // create new pdf and add our new canvas as an image
+			  var pdf = new jsPDF('l', 'pt', [reportPageWidth, reportPageHeight]);
+			  pdf.addImage($(pdfCanvas)[0], 'PNG', 0, 0);
+
+			  // download the pdf
+			  pdf.save('reporte en pdf.pdf');
+			});
+		
+		
+		
+		
+	});
+		function JSONToCSVConvertor(JSONData, ReportTitle, ShowLabel) {
+		    //If JSONData is not an object then JSON.parse will parse the JSON string in an Object
+		    var arrData = typeof JSONData != 'object' ? JSON.parse(JSONData) : JSONData;
+		    
+		    var CSV = '';    
+		    //Set Report title in first row or line
+		    
+		    CSV += ReportTitle + '\r\n\n';
+
+		    //This condition will generate the Label/Header
+		    if (ShowLabel) {
+		        var row = "";
+		        
+		        //This loop will extract the label from 1st index of on array
+		        for (var index in arrData[0]) {
+		            
+		            //Now convert each value to string and comma-seprated
+		            row += index + ',';
+		        }
+
+		        row = row.slice(0, -1);
+		        
+		        //append Label row with line break
+		        CSV += row + '\r\n';
+		    }
+		    
+		    //1st loop is to extract each row
+		    for (var i = 0; i < arrData.length; i++) {
+		        var row = "";
+		        
+		        //2nd loop will extract each column and convert it in string comma-seprated
+		        for (var index in arrData[i]) {
+		            row += '"' + arrData[i][index] + '",';
+		        }
+
+		        row.slice(0, row.length - 1);
+		        
+		        //add a line break after each row
+		        CSV += row + '\r\n';
+		    }
+
+		    if (CSV == '') {        
+		        alert("Invalid data");
+		        return;
+		    }   
+		    
+		    //Generate a file name
+		    var fileName = "MyReport_";
+		    //this will remove the blank-spaces from the title and replace it with an underscore
+		    fileName += ReportTitle.replace(/ /g,"_");   
+		    
+		    //Initialize file format you want csv or xls
+		    var uri = 'data:text/csv;charset=utf-8,' + escape(CSV);
+		    
+		    // Now the little tricky part.
+		    // you can use either>> window.open(uri);
+		    // but this will not work in some browsers
+		    // or you will not get the correct file extension    
+		    
+		    //this trick will generate a temp <a /> tag
+		    var link = document.createElement("a");    
+		    link.href = uri;
+		    
+		    //set the visibility hidden so it will not effect on your web-layout
+		    link.style = "visibility:hidden";
+		    link.download = fileName + ".csv";
+		    
+		    //this part will append the anchor tag and remove it after automatic click
+		    document.body.appendChild(link);
+		    link.click();
+		    document.body.removeChild(link);
+		}
+		
+		
+		
+		
+</script>
+
+
 </body>
 </html>

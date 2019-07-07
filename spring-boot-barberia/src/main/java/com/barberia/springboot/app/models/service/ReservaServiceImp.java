@@ -32,4 +32,21 @@ public class ReservaServiceImp implements IReservaService{
 		reservaDao.deleteById(id);
 	}
 
+	@Override
+	public List<Object> findTopBarbero() {
+		// TODO Auto-generated method stub
+		return reservaDao.findTopBarbero();
+	}
+
+	@Override
+	public List<Object> findTopServicios() {
+		// TODO Auto-generated method stub
+		return reservaDao.findTopServicios();
+	}
+
+	
+
+	
+
+
 }
