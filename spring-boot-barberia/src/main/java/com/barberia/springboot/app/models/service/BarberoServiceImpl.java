@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.barberia.springboot.app.models.dao.IBarberoDao;
 import com.barberia.springboot.app.models.entity.Barbero;
 import com.barberia.springboot.app.models.entity.BarberoServicio;
+import com.barberia.springboot.app.models.entity.Servicio;
 @Service
 public class BarberoServiceImpl implements IBarberoService{
 	@Autowired
@@ -47,4 +48,12 @@ public class BarberoServiceImpl implements IBarberoService{
 		}
 		return aux ;
 	}
+	public List<Servicio> buscarporBarbero(Long idBarbero){
+		List<Servicio> aux = new ArrayList<Servicio>();
+		for(BarberoServicio bar : bss.buscarPorBarbero(findOne(idBarbero))) {
+			aux.add(bar.getServicio());
+		}
+		return aux ;
+	}
+	
 }

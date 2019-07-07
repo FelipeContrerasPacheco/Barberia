@@ -3,11 +3,13 @@
 This is a starter template page. Use this page to start your new project from
 scratch. This page gets rid of all links and provides the needed markup only.
 -->
-<html xmlns:th="http://www.thymeleaf.org"
-	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="_csrf" th:content="${_csrf.token}"/>
+<meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+
 <title>Style</title>
 <!-- Tell the browser to be responsive to screen width -->
 <meta
@@ -30,8 +32,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
         page. However, you can choose any other skin. Make sure you
         apply the skin class to the body tag so the changes take effect. -->
 <link rel="stylesheet" th:href="@{/dist/css/skins/skin-blue.min.css}">
-<link th:href="@{/toastr.min.css}" rel="stylesheet" />
-
+<link href="/toastr.min.css" rel="stylesheet" />
+<link rel="icon" type="image/jpg" href="/dist/img/icon.jpg">
 <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
 <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
 <!--[if lt IE 9]>
@@ -42,7 +44,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <!-- Google Font -->
 <link rel="stylesheet"
 	th:href="@{https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic}">
-<link rel="icon" type="image/jpg" href="/dist/img/icon.jpg">
+
 </head>
 <!--
 BODY TAG OPTIONS:
@@ -85,13 +87,52 @@ desired effect
 				<section class="content">
 					<div class="row">
 						<div class="col-xs-12">
+
 							<div class="box box-info">
 								<div class="box-header">
-									<h3 class="box-title"></h3>
-									<a th:href="@{/barbero/form}"
-										class="btn btn-success btn-flat margin btn-xl pull-right"
-										th:text="#{text.barbero.crear}"></a>
+
+									<a th:href="@{/barbero/listar}"
+											class="btn btn-primary btn-flat margin btn-xl float-right"
+											th:text="'Volver'"></a>
 								</div>
+								<div class="box-header">
+								<form th:action="@{/barbero/agregarS}" th:object="${barberoServicio}"
+										method="post">
+										<div class="form-group row">
+												<label for="exampleFormControlSelect1">Agregar Servicio</label>
+										<div class="col-sm-6" style="width: 40%;height: 100%;display: flex;align-items: center;">
+    									
+    										<select class="form-control" id="servis" width="40%"  name="servicio">
+                                                          <option value="">Seleccione un servicio</option>
+                                                        <option th:if="${not servicios.isEmpty()}"
+                                                                th:value="${sv.id}"
+                                                                th:text="${sv.nombre}+': '+${sv.duracion}"
+                                                                th:each="sv : ${servicios}"></option>
+    										</select>
+											</div>
+
+										</div>
+
+										<div class="form-group row">
+
+											<div class="col-sm-6" th:each="barbero: ${barberos}">
+												<input type="hidden" name='j_username' th:value="${barbero.id}">
+											</div>
+											
+
+										</div>
+
+										<div class="form-group row">
+											<div class="col-sm-6">
+												<input type="submit" th:value="${titulo}"
+													class="btn btn-success btn-flat margin" />
+											</div>
+										
+										</div>
+									</form>
+
+    										
+  										</div>
 								<!-- /.box-header -->
 								<div class="box-body">
 									<div class="table-responsive">
@@ -99,46 +140,25 @@ desired effect
 											class="table table-bordered table-striped">
 											<thead>
 												<tr>
-													<th>Id</th>
 													<th>Nombre</th>
-													<th>Apellido</th>
-													<th>Email</th>
-													<th>Teléfono</th>
-													<th>Acciones</th>
+													<th>Duración</th>
 												</tr>
 											</thead>
 											<tbody>
-												<tr th:each="barbero: ${barberos}">
-													<td th:text="${barbero.id}"></td>
-													<td th:text="${barbero.nombre}"></td>
-													<td th:text="${barbero.apellido}"></td>
-													<td th:text="${barbero.email}"></td>
-													<td th:text="${barbero.telefono}"></td>
-													<td><a class="btn btn-info btn-flat margin"
-														th:href="@{/barbero/form/} + ${barbero.id}"
-														th:text="#{text.barbero.editar}"></a> <a
-														class="btn btn-danger btn-flat margin"
-														th:href="@{/barbero/eliminar/} + ${barbero.id}"
-														th:text="#{text.barbero.eliminar}"
-														onclick="return confirm('¿Estás seguro que quieres eliminar el barbero?');"></a>
-														<a class="btn btn-warning btn-flat margin"
-														th:href="@{/barbero/agregarS/} + ${barbero.id}"
-														th:text="#{text.barbero.agregar}"></a>
-													</td>
+												<tr th:each="servicio: ${servicio}">
+													<td th:text="${servicio.nombre}"></td>
+													<td th:text="${servicio.duracion}"></td>
+
+													
 												</tr>
 											</tbody>
 											<tfoot>
 												<tr>
-													<th>Id</th>
 													<th>Nombre</th>
-													<th>Apellido</th>
-													<th>Email</th>
-													<th>Teléfono</th>
-													<th>Acciones</th>
+													<th>Duración</th>
 												</tr>
 											</tfoot>
 										</table>
-
 									</div>
 								</div>
 								<!-- /.box-body -->
@@ -173,26 +193,7 @@ desired effect
 		th:src="@{/bower_components/datatables.net/js/jquery.dataTables.min.js}"></script>
 	<script
 		th:src="@{/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js}"></script>
-	<script th:src="@{/toastr.min.js}"></script>
-	<script th:inline="javascript">
-                var success = [[${success}]];
-                if (success != null) {
-                    toastr.success(success, 'Mensaje:', {"closeButton": true, positionClass: 'toast-bottom-right'});
-                }
-                var error = [[${error}]];
-                if (error != null) {
-                    toastr.error(error, 'Mensaje:', {"closeButton": true, positionClass: 'toast-bottom-right'});
-                }
-                var info = [[${info}]];
-                if (info != null) {
-                    toastr.info(info, 'Mensaje:', {"closeButton": true, positionClass: 'toast-bottom-right'});
-                }
-                var warning = [[${warning}]];
-                if (warning != null) {
-                    toastr.warning(warning, 'Mensaje:', {"closeButton": true, positionClass: 'toast-bottom-right'});
-                }
-            </script>
-	
+	<script src="/toastr.min.js"></script>
 	<script>
 		$(function() {
 			$('#example1').DataTable({
@@ -226,7 +227,24 @@ desired effect
 		}
 	</script>
 
-	
+	<script th:inline="javascript">
+                var success = [[${success}]];
+                if (success != null) {
+                    toastr.success(success, 'Mensaje:', {"closeButton": true, positionClass: 'toast-bottom-right'});
+                }
+                var error = [[${error}]];
+                if (error != null) {
+                    toastr.error(error, 'Mensaje:', {"closeButton": true, positionClass: 'toast-bottom-right'});
+                }
+                var info = [[${info}]];
+                if (info != null) {
+                    toastr.info(info, 'Mensaje:', {"closeButton": true, positionClass: 'toast-bottom-right'});
+                }
+                var warning = [[${warning}]];
+                if (warning != null) {
+                    toastr.warning(warning, 'Mensaje:', {"closeButton": true, positionClass: 'toast-bottom-right'});
+                }
+            </script>
 	<!-- Optionally, you can add Slimscroll and FastClick plugins.
      Both of these plugins are recommended to enhance the
      user experience. -->

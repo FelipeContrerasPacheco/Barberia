@@ -23,13 +23,18 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.barberia.springboot.app.models.entity.Barbero;
+import com.barberia.springboot.app.models.entity.BarberoServicio;
+import com.barberia.springboot.app.models.entity.Servicio;
 import com.barberia.springboot.app.models.service.IBarberoService;
+import com.barberia.springboot.app.models.service.IBarberoServicioService;
+import com.barberia.springboot.app.models.service.IServicioService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 //@Secured("ROLE_ADMIN")
@@ -40,6 +45,10 @@ public class barberoController {
 	
 	@Autowired
 	private IBarberoService barberoService;
+	@Autowired
+	private IServicioService ss ;
+	@Autowired
+	private IBarberoServicioService bs ;
 	
 	@Secured("ROLE_ADMIN")
 	@GetMapping(value = "/listar")
@@ -116,12 +125,45 @@ public class barberoController {
 		return barberoService.findAll() ;
 	}
 	
-	//@RequestMapping(path = "/listarbarberosservicios", produces="application/json")
-	//@ResponseBody
-	//public List<Barbero> listarBarberoyServicios(){
-	//	return barberoService.buscarporServicio(2L) ;
-	//}
+	@RequestMapping(path = "/listarbarberosservicios", produces="application/json")
+	@ResponseBody
+	public List<Barbero> listarBarberoyServicios(){
+		return barberoService.buscarporServicio(2L) ;
+	}
+	@RequestMapping(path = "/listarrberoservicioba", produces="application/json")
+	@ResponseBody
+	public List<Servicio> listarServiciosporBarbero(){
+		return barberoService.buscarporBarbero(1L) ;
+	}
+	@Secured("ROLE_ADMIN")
+	@RequestMapping(value="/agregarS/{id}")
+	public String agregar(@PathVariable(value="id") Long id, Map<String, Object> model, RedirectAttributes flash) {
+		model.put("servicio",barberoService.buscarporBarbero(id));
+		model.put("servicios",ss.findAll());
+		model.put("barberos",barberoService.findOne(id));
+		model.put("titulo", "Agregar Servicio");
+		return "barbero/agregar";
+	}
 	
+	@Secured("ROLE_ADMIN")
+	@RequestMapping(value = "/agregarS", method = RequestMethod.POST)
+	public String guardar2(@Valid BarberoServicio barberoServicio,@RequestParam("j_username") Long username, BindingResult result, Model model, RedirectAttributes flash, SessionStatus status) {
+
+		
+		if (result.hasErrors()) {
+			model.addAttribute("titulo", "Agregar Servicio");
+			return "barbero/agregarS/"+username;
+		}
+		String mensajeFlash =  "Agregado con éxito!";
+		System.out.println("este el id "+ username);
+		System.out.println(barberoServicio.getServicio().getId()+ "este el id");
+		barberoServicio.setServicio(ss.findOne(barberoServicio.getServicio().getId()));
+		barberoServicio.setBarbero(barberoService.findOne(username));
+		bs.save(barberoServicio);
+		status.setComplete();
+		flash.addFlashAttribute("success", mensajeFlash);
+		return "redirect:/barbero/agregarS/"+username;
+	}
     @PostMapping(value = "/listarbarberosservicios", produces = {"application/json"})
     public @ResponseBody
     List<Barbero> cargarBarberos(@RequestBody String json) throws Exception {

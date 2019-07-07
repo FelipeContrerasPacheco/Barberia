@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.barberia.springboot.app.models.dao.IBarberoServicioDao;
+import com.barberia.springboot.app.models.entity.Barbero;
 import com.barberia.springboot.app.models.entity.BarberoServicio;
 import com.barberia.springboot.app.models.entity.Servicio;
 
@@ -38,6 +39,10 @@ public class BarberoServicioServiceImp implements IBarberoServicioService{
 	@Override
 	public List<BarberoServicio> buscarPorServicio(Servicio servicio) {
 		return bsDao.findByServicio(servicio);
+	}
+	@Override
+	public List<BarberoServicio> buscarPorBarbero(Barbero barbero) {
+		return bsDao.findByBarbero(barbero);
 	}
 	
 }
