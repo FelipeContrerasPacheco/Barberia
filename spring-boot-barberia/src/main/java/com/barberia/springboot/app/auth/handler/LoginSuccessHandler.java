@@ -44,9 +44,9 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 		}
 
 		if (admin) {
-			response.sendRedirect("/barbero/listar");
+			response.sendRedirect("/reserva/reportes");
 		} else {
-			response.sendRedirect("/cliente/listar");
+			response.sendRedirect("/reserva/form");
 		}
 
 	}

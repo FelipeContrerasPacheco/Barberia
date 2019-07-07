@@ -42,11 +42,17 @@ INSERT INTO barbero_servicio (barbero_id,servicio_id) VALUES (3,2);
 INSERT INTO barbero_servicio (barbero_id,servicio_id) VALUES (5,2);
 INSERT INTO barbero_servicio (barbero_id,servicio_id) VALUES (8,2);
 
-INSERT INTO bloque_horario (id_bloque,hora_fin,hora_inicio) VALUES(1,"09:00","09:30");
-INSERT INTO bloque_horario (id_bloque,hora_fin,hora_inicio) VALUES(2,"09:30","10:00");
-INSERT INTO bloque_horario (id_bloque,hora_fin,hora_inicio) VALUES(3,"10:00","10:30");
-INSERT INTO bloque_horario (id_bloque,hora_fin,hora_inicio) VALUES(4,"10:30","11:00");
+INSERT INTO bloque_horario (id_bloque,hora_inicio, hora_fin) VALUES(1,"09:00","09:30");
+INSERT INTO bloque_horario (id_bloque,hora_inicio, hora_fin) VALUES(2,"09:30","10:00");
+INSERT INTO bloque_horario (id_bloque,hora_inicio, hora_fin) VALUES(3,"10:00","10:30");
+INSERT INTO bloque_horario (id_bloque,hora_inicio, hora_fin) VALUES(4,"10:30","11:00");
 
+INSERT INTO reserva (id,estado,fecha,precio,barbero_id,bloque_id_bloque,cliente_id,servicio_id) VALUES (1,0,'07/08/2019',5000,5,4,3,2);
+INSERT INTO reserva (id,estado,fecha,precio,barbero_id,bloque_id_bloque,cliente_id,servicio_id) VALUES (2,0,'07/11/2019',5000,2,2,3,3);
+INSERT INTO reserva (id,estado,fecha,precio,barbero_id,bloque_id_bloque,cliente_id,servicio_id) VALUES (3,0,'07/01/2019',5000,8,2,2,2);
+INSERT INTO reserva (id,estado,fecha,precio,barbero_id,bloque_id_bloque,cliente_id,servicio_id) VALUES (4,0,'07/09/2019',5000,2,2,10,3);
+INSERT INTO reserva (id,estado,fecha,precio,barbero_id,bloque_id_bloque,cliente_id,servicio_id) VALUES (5,0,'07/09/2019',5000,2,4,2,3);
+INSERT INTO reserva (id,estado,fecha,precio,barbero_id,bloque_id_bloque,cliente_id,servicio_id) VALUES (6,0,'07/01/2019',5000,8,2,3,2);
 
 /*Creamos usuarios y sus roles*/
 INSERT INTO users (username, password, enabled) VALUES('secretaria', '$2a$10$HUuNeObsc5iqan95ZfmPjOB8nO51Q4TErr6o7ALlr9FbwFWY6LBpO', 1);
