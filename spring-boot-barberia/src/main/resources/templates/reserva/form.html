@@ -102,14 +102,16 @@ desired effect
 										<div class="form-group row">
 											<div class="col-sm-3"></div>
 
-											<div class="col-sm-6">
-												<label for="fecha" class="col-sm-2 col-form-label">Fecha</label>
-												<input type="text" th:field="*{fecha}" 
-													class="form-control"
-													th:errorclass="'form-control alert-danger'" /> <small
-													class="form-text text-danger"
-													th:if="${#fields.hasErrors('fecha')}"
-													th:errors="*{fecha}"></small>
+											<div class="input-group date">
+													<label for="fecha" class="col-sm-2 col-form-label">Fecha</label>
+													<div class="input-group-addon">
+														<i class="fa fa-calendar"></i>
+													</div>
+													<input type="text" id="datepicker" th:field="*{fecha}" class="form-control"
+														th:errorclass="'form-control alert-danger'" required/>
+												</div>
+												<small class="form-text text-danger"
+													th:if="${#fields.hasErrors('fecha')}" th:errors="*{fecha}"></small>
 											</div>
 											<div class="col-sm-3"></div>
 
@@ -119,12 +121,15 @@ desired effect
 
 											<div class="col-sm-6">
 												<label for="bloque" class="col-sm-2 col-form-label">Bloque</label>
-												<input type="text" th:field="*{bloque}"
-													class="form-control"
-													th:errorclass="'form-control alert-danger'" /> <small
-													class="form-text text-danger"
-													th:if="${#fields.hasErrors('bloque')}"
-													th:errors="*{bloque}"></small>
+												    <select class="form-control select2" style="width: 100%"
+                                                            name="bloque"
+                                                            id="bloque" required>
+                                                        <option value="">Seleccione el bloque</option>
+                                                        <option th:if="${not bloques.isEmpty()}"
+                                                                th:value="${bl.idBloque}"
+                                                                th:text="${bl.horaInicio}+' '+${bl.horaFin}"
+                                                                th:each="bl : ${bloques}"></option>
+                                                    </select>
 											</div>
 											<div class="col-sm-3"></div>
 
@@ -134,10 +139,15 @@ desired effect
 
 											<div class="col-sm-6">
 												<label for="cliente" class="col-sm-2 col-form-label">Cliente</label>
-												<input type="text" th:field="*{cliente}" class="form-control"
-													th:errorclass="'form-control alert-danger'" /> <small
-													class="form-text text-danger"
-													th:if="${#fields.hasErrors('cliente')}" th:errors="*{cliente}"></small>
+												<select class="form-control select2" style="width: 100%"
+                                                            name="cliente"
+                                                            id="cliente"required>
+                                                        <option id="-1" value="">Seleccione un cliente"</option>
+                                                        <option th:if="${not clientes.isEmpty()}"
+                                                                th:value="${cl.id}"
+                                                                th:text="${cl.nombre}+' '+${cl.apellido}"
+                                                                th:each="cl : ${clientes}"></option>
+                                                    </select>
 											</div>
 											<div class="col-sm-3"></div>
 
@@ -148,12 +158,16 @@ desired effect
 											<div class="col-sm-6">
 												<label for="servicio" class="col-sm-2 col-form-label">Servicio</label>
 
-												<input type="text" th:field="*{servicio}"
-													class="form-control"
-													th:errorclass="'form-control alert-danger'" /> <small
-													class="form-text text-danger"
-													th:if="${#fields.hasErrors('servicio')}"
-													th:errors="*{servicio}"></small>
+												<select class="form-control select2" style="width: 100%"
+												        onchange="cargarBarberos(this.value)"
+                                                            name="servicio"
+                                                            id="servicio"required>
+                                                        <option value="">Seleccione un servicio</option>
+                                                        <option th:if="${not servicios.isEmpty()}"
+                                                                th:value="${sv.id}"
+                                                                th:text="${sv.nombre}+': '+${sv.precio}"
+                                                                th:each="sv : ${servicios}"></option>
+                                                    </select>
 											</div>
 											<div class="col-sm-3"></div>
 
@@ -162,14 +176,13 @@ desired effect
 										<div class="form-group row">
 											<div class="col-sm-3"></div>
 											<div class="col-sm-6">
-												<label for="barbero" class="col-sm-2 col-form-label">Barbero</label>
+												<label for="barberos" class="col-sm-2 col-form-label">Barbero</label>
 
-												<input type="text" th:field="*{barbero}"
-													class="form-control"
-													th:errorclass="'form-control alert-danger'" /> <small
-													class="form-text text-danger"
-													th:if="${#fields.hasErrors('barbero')}"
-													th:errors="*{barbero}"></small>
+												<select class="form-control select2" style="width: 100%"
+                                                            name="barberos"
+                                                            th:field="*{barbero}"
+                                                            id="barberos"required>
+                                                    </select>
 											</div>
 											<div class="col-sm-3"></div>
 
