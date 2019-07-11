@@ -7,6 +7,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <head>
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="_csrf" th:content="${_csrf.token}"/>
+<meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+
 <title>Style</title>
 <!-- Tell the browser to be responsive to screen width -->
 <meta
@@ -25,6 +28,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <!-- DataTables -->
 <link rel="stylesheet"
 	th:href="@{/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css}">
+  <link rel="stylesheet" th:href="@{/bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css}">
 <!-- AdminLTE Skins. We have chosen the skin-blue for this starter
         page. However, you can choose any other skin. Make sure you
         apply the skin class to the body tag so the changes take effect. -->
@@ -102,7 +106,10 @@ desired effect
 										<div class="form-group row">
 											<div class="col-sm-3"></div>
 
-											<div class="input-group date">
+											<div class="col-sm-6">
+												
+
+												<div class="input-group date">
 													<label for="fecha" class="col-sm-2 col-form-label">Fecha</label>
 													<div class="input-group-addon">
 														<i class="fa fa-calendar"></i>
@@ -116,24 +123,7 @@ desired effect
 											<div class="col-sm-3"></div>
 
 										</div>
-										<div class="form-group row">
-											<div class="col-sm-3"></div>
-
-											<div class="col-sm-6">
-												<label for="bloque" class="col-sm-2 col-form-label">Bloque</label>
-												    <select class="form-control select2" style="width: 100%"
-                                                            name="bloque"
-                                                            id="bloque" required>
-                                                        <option value="">Seleccione el bloque</option>
-                                                        <option th:if="${not bloques.isEmpty()}"
-                                                                th:value="${bl.idBloque}"
-                                                                th:text="${bl.horaInicio}+' '+${bl.horaFin}"
-                                                                th:each="bl : ${bloques}"></option>
-                                                    </select>
-											</div>
-											<div class="col-sm-3"></div>
-
-										</div>
+										
 										<div class="form-group row">
 											<div class="col-sm-3"></div>
 
@@ -180,8 +170,26 @@ desired effect
 
 												<select class="form-control select2" style="width: 100%"
                                                             name="barberos"
+                                                            onchange="cargarBloques(this.value,datepicker.value)"
                                                             th:field="*{barbero}"
                                                             id="barberos"required>
+                                                    </select>
+											</div>
+											<div class="col-sm-3"></div>
+
+										</div>
+										
+										<div class="form-group row">
+											<div class="col-sm-3"></div>
+
+											<div class="col-sm-6">
+												<label for="bloque" class="col-sm-2 col-form-label">Bloque</label>
+												    <select class="form-control select2" style="width: 100%"
+                                                            name="bloque"
+                                                            
+                                                            th:field="*{bloque}"
+                                                            id="bloque" required>
+                                                        
                                                     </select>
 											</div>
 											<div class="col-sm-3"></div>
@@ -230,6 +238,9 @@ desired effect
 		th:src="@{/bower_components/datatables.net/js/jquery.dataTables.min.js}"></script>
 	<script
 		th:src="@{/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js}"></script>
+		
+	<!-- bootstrap datepicker -->
+<script th:src="@{/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js}"></script>	
 	<script src="/toastr.min.js"></script>
 	<script>
 		$(function() {
@@ -262,6 +273,78 @@ desired effect
 				"sSortDescending" : ": Activar para ordenar la columna de manera descendente"
 			}
 		}
+		
+		
+		//Date picker
+	    $('#datepicker').datepicker({
+	      autoclose: true
+	    })
+	     var token = $("meta[name='_csrf']").attr("content");
+         var header = $("meta[name='_csrf_header']").attr("content");
+         console.log(token);
+         console.log(header);
+         
+	    function cargarBarberos(s) {
+        var dropdown = $('#barberos');
+        dropdown.empty();
+        var json = {"id": s};
+        console.log(json);
+        $.ajax({
+            type: "POST",
+            contentType: "application/json",
+            url: "/barbero/listarbarberosservicios",
+            dataType: "json",
+            data: JSON.stringify(json),
+            cache: false,
+            beforeSend: function (e) {
+                e.setRequestHeader(header, token)
+            },
+            timeout: 600000,
+            success: function (data) {
+            	console.log(data);
+                if (data.length > 0) {
+                    $.each(data, function (index, value) {
+                        dropdown.append($('<option/>', {
+                            value: value.id,
+                            text: value.nombre
+                        }));
+                    });
+                }
+            }
+        });
+      }
+	  
+	    function cargarBloques(s,f) {
+	        var dropdown = $('#bloque');
+	        dropdown.empty();
+	        var json = {"id": s,"fecha": f};
+	        console.log(json);
+	        $.ajax({
+	            type: "POST",
+	            contentType: "application/json",
+	            url: "/reserva/listarbloques",
+	            dataType: "json",
+	            data: JSON.stringify(json),
+	            cache: false,
+	            beforeSend: function (e) {
+	                e.setRequestHeader(header, token)
+	            },
+	            timeout: 600000,
+	            success: function (data) {
+	            	console.log(data);
+	                if (data.length > 0) {
+	                    $.each(data, function (index, value) {
+	                        dropdown.append($('<option/>', {
+	                            value: value.idBloque,
+	                            text: value.horaFin +" " +value.horaInicio
+	                        }));
+	                    });
+	                }
+	            }
+	        });
+	      }
+	
+	    
 	</script>
 
 	<script th:inline="javascript">
