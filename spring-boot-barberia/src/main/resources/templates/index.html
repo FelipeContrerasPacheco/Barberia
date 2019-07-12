@@ -260,17 +260,18 @@
 				<div class="col-md-4 heading-section ftco-animate text-center">
 					 <div class="form-group">
     					<label for="exampleFormControlSelect1">Fecha</label>
-    					<input type="date" id="datepicker"  class="form-control"
+    					<input placeholder="mm/dd/aaaa" id="datepicker"  class="form-control"
 									 style="border-radius: 15px;background: black !important;color: white !important;"/>
   					</div>
 				</div>
 				<div class="col-md-4 heading-section ftco-animate text-center">
 					 <div class="form-group">
     					<label for="exampleFormControlSelect1">Servicio</label>
-    					<select class="form-control" id="exampleFormControlSelect1" style="border-radius: 15px;background: black !important;color: white !important;">
+    					<select class="form-control" onchange="cargarBarberos(this.value)" id="exampleFormControlSelect1" style="border-radius: 15px;background: black !important;color: white !important;">
       					<option value="">Seleccione un servicio</option>
                                                         <option th:if="${not servicios.isEmpty()}"
                                                                 th:value="${sv.id}"
+
                                                                 th:text="${sv.nombre}+': '+${sv.duracion}"
                                                                 th:each="sv : ${servicios}"></option>
     					</select>
@@ -278,20 +279,16 @@
 				</div>
 				<div class="col-md-4 heading-section ftco-animate text-center">
 					 <div class="form-group">
-    					<label for="exampleFormControlSelect1">Barbero</label>
-    					<select class="form-control" id="exampleFormControlSelect1" style="border-radius: 15px;background: black !important;color: white !important;">
-      					<option value="">Seleccione un Barbero</option>
-                                                        <option th:if="${not barberos.isEmpty()}"
-                                                                th:value="${sv.id}"
-                                                                th:text="${sv.nombre}"
-                                                                th:each="sv : ${barberos}"></option>
-    					</select>
+    					<label for="barberos">Barbero</label>
+    					<select class="form-control select2" style="border-radius: 15px;background: black !important;color: white !important;width: 100%" name="barberos" id="selecbarberos" onchange="cargarBloques(this.value,datepicker.value)" onfocus="cargarBloques(this.value,datepicker.value)">
+                        </select>
+    					
   					</div>
 				</div>
 			</div>
-			<div class="row justify-content">
+			<div class="row justify-content" id="horario">
 				<div class="col-lg-3 mb-sm-4 ftco-animate"
-					th:each="horario: ${horarios}">
+					th:each="horario: ${horarios}" >
 					<div class="staff" style="overflow: auto;">
 								<div class="col-mx-9" style="float: left;">
 									<h3 th:text="${horario.horaInicio}+'-'+${horario.horaFin}"></h3>
@@ -361,5 +358,82 @@
 	<script th:src="@{index/js/scrollax.min.js}"></script>
 	<script th:src="@{index/js/google-map.js}"></script>
 	<script th:src="@{index/js/main.js}"></script>
+	<script src="/toastr.min.js"></script>
+	<script>
+		$('#datepicker').datepicker({
+	      autoclose: true
+	    })
+	     var token = '66117357-268f-43fd-9491-b5790a6ecdd5';
+         var header = 'X-CSRF-TOKEN';
+         console.log(token);
+         console.log(header);
+         
+	    function cargarBarberos(s) {
+        var dropdown = $('#selecbarberos');
+        dropdown.empty();
+        var json = {"id": s};
+        console.log(json);
+        $.ajax({
+            type: "POST",
+            contentType: "application/json",
+            url: "/barbero/listarbarberosservicios",
+            dataType: "json",
+            data: JSON.stringify(json),
+            cache: false,
+            beforeSend: function (e) {
+                e.setRequestHeader(header, token)
+            },
+            timeout: 600000,
+            success: function (data) {
+            	console.log(data);
+                if (data.length > 0) {
+                    $.each(data, function (index, value) {
+                        dropdown.append($('<option/>', {
+                            value: value.id,
+                            text: value.nombre
+                        }));
+                    });
+                }
+            }
+        });
+      }
+	  
+	    function cargarBloques(s,f) {
+	        var dropdown = [];
+	        var json = {"id": s,"fecha": f};
+	        console.log(json);
+	        $.ajax({
+	            type: "POST",
+	            contentType: "application/json",
+	            url: "/reserva/listarbloques",
+	            dataType: "json",
+	            data: JSON.stringify(json),
+	            cache: false,
+	            beforeSend: function (e) {
+	                e.setRequestHeader(header, token)
+
+	            },
+	            timeout: 600000,
+	            success: function (data) {
+	            	console.log(data);
+	                if (data.length > 0) {
+	                    $.each(data, function (index, value) {
+	                        dropdown.push('<div class="col-lg-3 mb-sm-4 " >');
+	                        dropdown.push('<div class="staff" style="overflow: auto;">');
+							dropdown.push('	<div class="col-mx-9" style="float: left;">');
+							dropdown.push('		<h3>'+value.horaInicio+'-'+value.horaFin+'</h3>');
+							dropdown.push('	</div>	');
+							dropdown.push('	<div class="col-mx-3" style="float: right;">');
+							dropdown.push('		<span class="icon icon-chevron-right" style="font-size: 30px;"></span>');
+							dropdown.push('	</div>	');
+							dropdown.push('	</div>');
+							dropdown.push('	</div>');		
+	                    });
+	                }
+	                $('#horario').html(dropdown.join(''));
+	            }
+	        });
+	      }
+	</script>
 </body>
 </html>
