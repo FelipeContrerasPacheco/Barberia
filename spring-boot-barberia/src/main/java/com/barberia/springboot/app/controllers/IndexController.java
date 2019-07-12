@@ -6,6 +6,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import com.barberia.springboot.app.models.service.IBarberoService;
+import com.barberia.springboot.app.models.service.IBloqueHorarioService;
 import com.barberia.springboot.app.models.service.IServicioService;
 
 @Controller
@@ -16,6 +17,8 @@ public class IndexController {
 	
 	@Autowired
 	private IServicioService servicioService;
+	@Autowired
+	private IBloqueHorarioService bh;
 	
 	@GetMapping("/")
 	public String home(Model model) {
@@ -23,6 +26,7 @@ public class IndexController {
 		model.addAttribute("mensaje",mensaje);
 		model.addAttribute("barberos", barberoService.findAll());	
 		model.addAttribute("servicios", servicioService.findAll());
+		model.addAttribute("horarios", bh.findAll());
 		return "index";
 	}
 	
