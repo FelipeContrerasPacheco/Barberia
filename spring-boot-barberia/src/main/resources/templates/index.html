@@ -7,6 +7,9 @@
 <meta charset="utf-8">
 <meta name="viewport"
 	content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="_csrf" th:content="${_csrf.token}"/>
+<meta name="_csrf_header" th:content="${_csrf.headerName}"/>
 
 <link th:href="@{https://fonts.googleapis.com/css?family=Cookie}"
 	rel="stylesheet">
@@ -363,8 +366,8 @@
 		$('#datepicker').datepicker({
 	      autoclose: true
 	    })
-	     var token = '66117357-268f-43fd-9491-b5790a6ecdd5';
-         var header = 'X-CSRF-TOKEN';
+	     var token = $("meta[name='_csrf']").attr("content");
+         var header = $("meta[name='_csrf_header']").attr("content");
          console.log(token);
          console.log(header);
          

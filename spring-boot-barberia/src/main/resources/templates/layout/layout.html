@@ -110,6 +110,10 @@
 					th:classappend="${#httpServletRequest.getRequestURI() == '/servicios/listar' ? 'active':''}"><a
 					th:href="@{/servicios/listar}"><i class="fa fa-cut"></i> <span>Gestión
 							de servicios</span></a></li>
+				<li sec:authorize="hasRole('ROLE_ADMIN')"
+					th:classappend="${#httpServletRequest.getRequestURI() == '/bloquehorario/listar' ? 'active':''}"><a
+					th:href="@{/bloquehorario/listar}"><i class="fa fa-cut"></i> <span>Gestión
+							de bloques</span></a></li>
 
 
 			</ul>

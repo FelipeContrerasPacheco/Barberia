@@ -6,6 +6,7 @@ import java.util.Map;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -36,7 +37,9 @@ import com.barberia.springboot.app.models.service.ServicioBloqueHorario;
 public class BloqueHorarioController {
 	@Autowired
 	private IBloqueHorarioService servicio ;
+
 	
+	@Secured("ROLE_ADMIN")
 	@GetMapping(value = "/form")
 	public String crearBloque(Map<String,Object> model) {
 		BloqueHorario bloque = new BloqueHorario();
@@ -44,7 +47,7 @@ public class BloqueHorarioController {
 		model.put("titulo","Crear Bloque");
 		return "bloquehorario/form" ;
 	}
-	
+	@Secured("ROLE_ADMIN")
 	@RequestMapping(value = "/form", method = RequestMethod.POST)
 	public String guardarBloque(@Valid BloqueHorario bloque, BindingResult result, Model model, RedirectAttributes flash, SessionStatus status) {
 		if(result.hasErrors()) {
@@ -58,7 +61,7 @@ public class BloqueHorarioController {
 		flash.addFlashAttribute("sucess",mensajeFlash);
 		return "redirect:/bloquehorario/listar" ;
 	}
-	
+	@Secured("ROLE_ADMIN")
 	@RequestMapping(value = "/form/{idBloque}")
 	public String editarBloque(@PathVariable(value="idBloque") Long idBloque, Map<String,Object> model, RedirectAttributes flash) {
 		BloqueHorario bloque = null ;
@@ -74,7 +77,7 @@ public class BloqueHorarioController {
 		}
 		model.put("bloque",bloque) ;
 		model.put("titulo","Editar Bloque");
-		return "bloque/form";
+		return "bloquehorario/form";
 	}
 	
 	@RequestMapping(value = "/eliminar/{idBloque}")
@@ -86,6 +89,7 @@ public class BloqueHorarioController {
 		return "redirect:/bloquehorario/listar";
 	}
 	
+	@Secured("ROLE_ADMIN")
 	@GetMapping(value = "/listar")
 	public String listarBloques(Model model) {
 		model.addAttribute("titulo","Lista de Horarios");
