@@ -115,7 +115,7 @@ desired effect
 														<i class="fa fa-calendar"></i>
 													</div>
 													<input type="text" id="datepicker" th:field="*{fecha}" class="form-control"
-														th:errorclass="'form-control alert-danger'" />
+														th:errorclass="'form-control alert-danger'" required/>
 												</div>
 												<small class="form-text text-danger"
 													th:if="${#fields.hasErrors('fecha')}" th:errors="*{fecha}"></small>
@@ -123,24 +123,7 @@ desired effect
 											<div class="col-sm-3"></div>
 
 										</div>
-										<div class="form-group row">
-											<div class="col-sm-3"></div>
-
-											<div class="col-sm-6">
-												<label for="bloque" class="col-sm-2 col-form-label">Bloque</label>
-												    <select class="form-control select2" style="width: 100%"
-                                                            name="bloque"
-                                                            id="bloque">
-                                                        <option value="">Seleccione el bloque</option>
-                                                        <option th:if="${not bloques.isEmpty()}"
-                                                                th:value="${bl.idBloque}"
-                                                                th:text="${bl.horaInicio}+' '+${bl.horaFin}"
-                                                                th:each="bl : ${bloques}"></option>
-                                                    </select>
-											</div>
-											<div class="col-sm-3"></div>
-
-										</div>
+										
 										<div class="form-group row">
 											<div class="col-sm-3"></div>
 
@@ -148,8 +131,8 @@ desired effect
 												<label for="cliente" class="col-sm-2 col-form-label">Cliente</label>
 												<select class="form-control select2" style="width: 100%"
                                                             name="cliente"
-                                                            id="cliente">
-                                                        <option value="">Seleccione un cliente</option>
+                                                            id="cliente"required>
+                                                        <option id="-1" value="">Seleccione un cliente"</option>
                                                         <option th:if="${not clientes.isEmpty()}"
                                                                 th:value="${cl.id}"
                                                                 th:text="${cl.nombre}+' '+${cl.apellido}"
@@ -168,7 +151,7 @@ desired effect
 												<select class="form-control select2" style="width: 100%"
 												        onchange="cargarBarberos(this.value)"
                                                             name="servicio"
-                                                            id="servicio">
+                                                            id="servicio"required>
                                                         <option value="">Seleccione un servicio</option>
                                                         <option th:if="${not servicios.isEmpty()}"
                                                                 th:value="${sv.id}"
@@ -187,8 +170,26 @@ desired effect
 
 												<select class="form-control select2" style="width: 100%"
                                                             name="barberos"
+                                                            onfocus="cargarBloques(this.value,datepicker.value)"
                                                             th:field="*{barbero}"
-                                                            id="barberos">
+                                                            id="barberos"required>
+                                                    </select>
+											</div>
+											<div class="col-sm-3"></div>
+
+										</div>
+										
+										<div class="form-group row">
+											<div class="col-sm-3"></div>
+
+											<div class="col-sm-6">
+												<label for="bloque" class="col-sm-2 col-form-label">Bloque</label>
+												    <select class="form-control select2" style="width: 100%"
+                                                            name="bloque"
+                                                            
+                                                            th:field="*{bloque}"
+                                                            id="bloque" required>
+                                                        
                                                     </select>
 											</div>
 											<div class="col-sm-3"></div>
@@ -312,6 +313,36 @@ desired effect
             }
         });
       }
+	  
+	    function cargarBloques(s,f) {
+	        var dropdown = $('#bloque');
+	        dropdown.empty();
+	        var json = {"id": s,"fecha": f};
+	        console.log(json);
+	        $.ajax({
+	            type: "POST",
+	            contentType: "application/json",
+	            url: "/reserva/listarbloques",
+	            dataType: "json",
+	            data: JSON.stringify(json),
+	            cache: false,
+	            beforeSend: function (e) {
+	                e.setRequestHeader(header, token)
+	            },
+	            timeout: 600000,
+	            success: function (data) {
+	            	console.log(data);
+	                if (data.length > 0) {
+	                    $.each(data, function (index, value) {
+	                        dropdown.append($('<option/>', {
+	                            value: value.idBloque,
+	                            text: value.horaFin +" " +value.horaInicio
+	                        }));
+	                    });
+	                }
+	            }
+	        });
+	      }
 	
 	    
 	</script>

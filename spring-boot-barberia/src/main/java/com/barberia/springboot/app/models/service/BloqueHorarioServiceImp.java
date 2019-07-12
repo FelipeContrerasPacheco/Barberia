@@ -64,7 +64,7 @@ public class BloqueHorarioServiceImp implements IBloqueHorarioService {
 			barberos.add(aux.getBarbero());
 		}
 		for(Barbero aux : barberos) {
-			reservas.addAll(reserva.findByFechaAndBarberoAndEstado(fecha,barbero.findOne(aux.getId()),1));
+			reservas.addAll(reserva.findByFechaAndBarberoAndEstado(fecha,barbero.findOne(aux.getId()),0));
 		}
 		for(Reserva aux : reservas) {
 			vacio.add(aux.getBloque());
@@ -75,7 +75,7 @@ public class BloqueHorarioServiceImp implements IBloqueHorarioService {
 
 	@Override
 	public List<BloqueHorario> buscarPorFechaYBarbero(String fecha, Long id) {
-		List<Reserva> reservas = reserva.findByFechaAndBarberoAndEstado(fecha,barbero.findOne(id),1);
+		List<Reserva> reservas = reserva.findByFechaAndBarberoAndEstado(fecha,barbero.findOne(id),0);
 		List<BloqueHorario> vacio = new ArrayList<BloqueHorario>();
 		for(Reserva aux : reservas) {
 			vacio.add(aux.getBloque());
